@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Module>
+    <ModulePrefs title="pubg" height="250" description="pubg">
+        <Require feature="pubsub-2"/>
+        <Require feature="dynamic-height"/>
+    </ModulePrefs>
+    <Content type="html">
+        <![CDATA[
+        <head>
+            <script language="javascript" type="text/javascript" src="/portal/js/jquery-1.10.2.js"></script>
+            <script>
+
+                //$(document).ready(function(){
+function DisableDropdown(){
+	//alert("entered disabledropdown");
+                   // $("#select_Year").change(function(){
+	var year = $("#select_Year").val();
+			    
+	if(document.getElementById("check_FullYear").checked){
+		var fullYear ="true";
+	}
+	else{    
+		var fullYear ="false"; 
+	}
+	//alert("pub:  year on change   "+fullYear);
+        
+	gadgets.Hub.publish('select', {
+        	msg : 'A message from pub-gadget1',
+                                year: year,
+				fullYear:fullYear
+                            });
+        	      // });
+                //});
+}
+                
+            </script>
+        <head>
+        <body>
+		<input type="checkbox" name="check_FullYear" id="check_FullYear" value="FullYear" onclick="DisableDropdown()">Display Full year
+                <p id="selectYear">Select Year:
+                <select id="select_Year" onChange="DisableDropdown()">
+                    <option name="2014">2014</option>
+                    <option name="2015" selected="selected">2015</option>
+                    <option name="2016">2016</option>
+                    <option name="2017">2017</option>
+                    <option name="2018">2018</option>
+                    <option name="2019">2019</option>
+                    <option name="2020">2020</option>
+                </select> </p>
+
+        </body>
+        ]]>
+    </Content>
+</Module>

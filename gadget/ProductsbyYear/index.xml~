@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Module>
+    <ModulePrefs title="sub-productBar" height="250" description="sub-productBar">
+        <Require feature="pubsub-2">
+            <Param name="topics">
+                <![CDATA[
+                <Topic title="geodata"
+                    name="org.wso2.ues.samples2.ch"
+                    description="sample channel to demonstrate intergadget communication"
+                    type="object"
+                    subscribe="true"/>
+               ]]>
+            </Param>
+        </Require>
+        <Require feature="dynamic-height"/>
+    </ModulePrefs>
+    <Content type="html">
+        <![CDATA[
+        <head>
+        <!-- refs-->
+            <link rel="stylesheet" href="/portal/css/igviz.css">
+            <link rel="stylesheet" href="/portal/css/bootstrap.min.css">
+            <link rel="stylesheet" href="/portal/css/charts.css">
+            <script src="/portal/js/jquery.min.js"></script>
+            <script src="/portal/js/bootstrap.min.js"></script>
+            <script src="/portal/js/date.js"></script>
+            <script src="/portal/js/d3.min.js"> </script>
+            <script src="/portal/js/vega.js"> </script>
+            <script src="/portal/js/igviz.js"> </script>
+        <!--refs end-->
+            <script language="javascript" type="text/javascript" src="/portal/js/jquery-1.10.2.js"></script>
+            <script>
+var input = []; // initialise an empty array
+gadgets.HubSettings.onConnect = function() {
+	
+        	gadgets.Hub.subscribe('state-selected', function(topic, data, subscriberData) {
+                      $('#log1').text(data.year);
+
+            input[0]=data.year;
+            input[1]=data.quarter;
+            input[2]=8;
+            input[3]=data.fullYear;
+                       //alert("data.year"+data.year);
+//alert("This is the array input"+input[0]);
+  		$.post( "http://10.100.4.35:9763/hostedForGadgets/DataLineGlobal.jag", {"entYear":input[0],"Quarter":input[1],"Month":input[2],"FullYear":input[3]},function( data ) {
+                            DrawGraph(data);
+                             //alert(data);
+        	});
+                });
+
+		
+
+	
+
+};
+
+
+//function to draw global graph
+function DrawGraph(DataProductPipeline){
+//alert("entered draw func");
+    console.log('starting the script');
+
+    var newDataOpen = JSON.parse(DataProductPipeline);
+//************************************
+
+// Drawing Line Charts
+    var histLineChart = {
+      "metadata":{
+        "names": ["WeekNo","Best","Expected","Worst"],
+        "types":['N','N','N','N']
+      },
+      "data": newDataOpen
+    }
+    console.log("this is the dataTableProductPipeline"+newDataOpen);
+    var globalConfig = {
+        "title": "",
+        "xAxis": 0,
+        "yAxis": [1,2,3],
+        "width": 250,
+        "height": 250,
+        "chartType": "line",
+        "aggregate" : "sum",
+        "pointVisible" : true
+
+    }
+
+    staticChart=igviz.setUp("#Pipeline", globalConfig, histLineChart);
+    console.log("here"+staticChart);
+    staticChart.setXAxis({zero:false});
+    staticChart.setYAxis({title: "Amount ($millions)"});
+    staticChart.plot(histLineChart.data);
+
+
+
+
+
+//***********************************
+
+
+    console.log("later i am here");
+}//end of DrawGraph function
+
+
+            </script>
+        <head>
+        <body padding="0px">
+  <!--          <div id="log1"></div>
+            <div id="log2"></div>
+            <p>new value:</p>
+            <div id="log3"></div>-->
+            <div id="Pipeline" class="col-lg-6" align="left" style="padding:0px;width:300px"><h3 align="center">Opportunity Pipeline</h3></div>
+            </body>
+        ]]>
+    </Content>
+</Module>
